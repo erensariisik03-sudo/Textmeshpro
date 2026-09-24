@@ -65,14 +65,35 @@ public class MainActivity extends Activity {
         OpenTag(String t, int s, String a) { tag=t; start=s; arg=a; }
     }
 
+    private static final Pattern UPPERCASE_TAG_PATTERN =
+            Pattern.compile("(?is)<(uppercase|allcaps)>(.*?)</\\1>");
+    private static final Pattern LOWERCASE_TAG_PATTERN =
+            Pattern.compile("(?is)<lowercase>(.*?)</lowercase>");
+    private static final Pattern SMALLCAPS_TAG_PATTERN =
+            Pattern.compile("(?is)<smallcaps>(.*?)</smallcaps>");
+
+    private static String replaceCaseTags(String src, Pattern pattern, int group, boolean upper) {
+        Matcher matcher = pattern.matcher(src);
+        StringBuffer out = new StringBuffer();
+        while (matcher.find()) {
+            String value = matcher.group(group);
+            String replacement = upper
+                    ? value.toUpperCase(Locale.ROOT)
+                    : value.toLowerCase(Locale.ROOT);
+            matcher.appendReplacement(out, Matcher.quoteReplacement(replacement));
+        }
+        matcher.appendTail(out);
+        return out.toString();
+    }
+
     private void render(String src, TextView view, float baseSp) {
         // Case transforms first, matching the requested testing workflow.
-        src = src.replaceAll("(?is)<(uppercase|allcaps)>(.*?)</\\1>",
-                m -> m.group(2).toUpperCase(Locale.ROOT));
-        src = src.replaceAll("(?is)<lowercase>(.*?)</lowercase>",
-                m -> m.group(1).toLowerCase(Locale.ROOT));
-        src = src.replaceAll("(?is)<smallcaps>(.*?)</smallcaps>",
-                m -> m.group(1).toUpperCase(Locale.ROOT));
+        // String.replaceAll() does not accept a lambda replacement; use Matcher
+        // with appendReplacement so the project also remains compatible with
+        // older Android runtimes.
+        src = replaceCaseTags(src, UPPERCASE_TAG_PATTERN, 2, true);
+        src = replaceCaseTags(src, LOWERCASE_TAG_PATTERN, 1, false);
+        src = replaceCaseTags(src, SMALLCAPS_TAG_PATTERN, 1, true);
 
         SpannableStringBuilder out = new SpannableStringBuilder();
         ArrayList<OpenTag> stack = new ArrayList<>();

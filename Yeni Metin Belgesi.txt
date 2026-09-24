@@ -1,0 +1,63 @@
+Run gradle assembleDebug
+  
+Welcome to Gradle 8.10!
+Here are the highlights of this release:
+ - Support for Java 23
+ - Faster configuration cache
+ - Better configuration cache reports
+For more details see https://docs.gradle.org/8.10/release-notes.html
+Starting a Gradle Daemon (subsequent builds will be faster)
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:javaPreCompileDebug
+> Task :app:checkDebugAarMetadata
+> Task :app:generateDebugResValues
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:packageDebugResources
+> Task :app:mergeDebugResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:processDebugManifestForPackage
+> Task :app:mergeDebugJavaResource
+> Task :app:checkDebugDuplicateClasses
+> Task :app:processDebugResources
+> Task :app:desugarDebugFileDependencies
+Error: /home/runner/work/Textmeshpro/Textmeshpro/app/src/main/java/com/example/textmeshtester/MainActivity.java:70: error: incompatible types: String is not a functional interface
+        src = src.replaceAll("(?is)<(uppercase|allcaps)>(.*?)</\\1>",
+                 ^
+Error: /home/runner/work/Textmeshpro/Textmeshpro/app/src/main/java/com/example/textmeshtester/MainActivity.java:72: error: incompatible types: String is not a functional interface
+        src = src.replaceAll("(?is)<lowercase>(.*?)</lowercase>",
+                 ^
+Error: /home/runner/work/Textmeshpro/Textmeshpro/app/src/main/java/com/example/textmeshtester/MainActivity.java:74: error: incompatible types: String is not a functional interface
+        src = src.replaceAll("(?is)<smallcaps>(.*?)</smallcaps>",
+                 ^
+Note: Some messages have been simplified; recompile with -Xdiags:verbose to get full output
+3 errors
+> Task :app:compileDebugJavaWithJavac FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_2-1790272178587.json
+21 actionable tasks: 21 executed
+FAILURE: Build failed with an exception.
+* What went wrong:
+Execution failed for task ':app:compileDebugJavaWithJavac'.
+> Compilation failed; see the compiler error output for details.
+* Try:
+> Run with --info option to get more log output.
+> Run with --scan to get full insights.
+BUILD FAILED in 32s
+Error: Process completed with exit code 1.
+
+--- FIX APPLIED ---
+MainActivity.java no longer uses String.replaceAll(..., lambda).
+The uppercase/allcaps, lowercase, and smallcaps transformations now use Matcher + appendReplacement + Matcher.quoteReplacement.
+This avoids the original "String is not a functional interface" compilation error.
